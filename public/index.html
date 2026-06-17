@@ -3,391 +3,292 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>TikDL — TikTok Downloader API</title>
+<title>TikDL — TikTok Downloader</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
-/* ── RESET ─────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --black:#0a0a0a;--white:#fffdf7;--yellow:#FFE500;
   --blue:#0066FF;--green:#00C853;--red:#FF1744;--orange:#FF5C00;
-  --gray:#f0ede6;--gray2:#e0ddd5;--gray3:#c8c4bc;
+  --gray:#f0ede6;--gray2:#e0ddd5;--gray3:#b0aca3;
   --border:3px solid var(--black);--border2:2px solid var(--black);
   --shadow:4px 4px 0 var(--black);--shadow-lg:6px 6px 0 var(--black);
-  --shadow-sm:2px 2px 0 var(--black);--shadow-hover:8px 8px 0 var(--black);
+  --shadow-sm:2px 2px 0 var(--black);
   --font:'Space Grotesk',sans-serif;--mono:'Space Mono',monospace;
 }
 html{scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--gray);color:var(--black);min-height:100vh;overflow-x:hidden;line-height:1.5}
+body{font-family:var(--font);background:var(--gray);color:var(--black);min-height:100vh;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
-button{font-family:var(--font);cursor:pointer}
+button{font-family:var(--font);cursor:pointer;border:none}
 
-/* ── ANIMATIONS ────────────────────────────────────────────── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
 
-.anim-fade-up{animation:fadeUp .5s ease both}
-.anim-fade-up-1{animation:fadeUp .5s .08s ease both}
-.anim-fade-up-2{animation:fadeUp .5s .16s ease both}
-.anim-fade-up-3{animation:fadeUp .5s .24s ease both}
-.anim-fade-up-4{animation:fadeUp .5s .32s ease both}
-.anim-fade-up-5{animation:fadeUp .5s .40s ease both}
-.anim-fade-up-6{animation:fadeUp .5s .48s ease both}
-
-/* ── NAV ────────────────────────────────────────────────────── */
+/* ── NAV ── */
 nav{
   position:sticky;top:0;z-index:100;
   background:var(--black);border-bottom:var(--border);
-  height:58px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 24px;gap:16px;
+  height:56px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;
 }
 .nav-logo{
-  font-family:var(--mono);font-weight:700;font-size:17px;letter-spacing:-0.5px;
-  color:var(--white);display:flex;align-items:center;gap:0;white-space:nowrap;
+  font-family:var(--mono);font-weight:700;font-size:16px;
+  color:var(--white);display:flex;align-items:center;gap:0;
 }
-.nav-logo span{background:var(--yellow);color:var(--black);padding:2px 6px;margin-left:1px}
-.nav-links{display:flex;align-items:center;gap:0}
-.nav-link{
-  padding:8px 16px;font-family:var(--mono);font-size:12px;font-weight:700;
-  letter-spacing:0.5px;text-transform:uppercase;color:rgba(255,255,255,.55);
-  border-left:2px solid rgba(255,255,255,.1);transition:all .15s;
+.nav-logo span{background:var(--yellow);color:var(--black);padding:1px 6px;margin-left:2px}
+.nav-right{display:flex;align-items:center;gap:0}
+.nav-btn{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 14px;
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  letter-spacing:0.5px;text-transform:uppercase;
+  color:rgba(255,255,255,0.55);
+  border-left:2px solid rgba(255,255,255,0.1);
+  transition:color .15s;background:none;
 }
-.nav-link:hover,.nav-link.active{color:var(--yellow)}
+.nav-btn:hover{color:var(--yellow)}
+.nav-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .nav-badge{
   background:var(--yellow);color:var(--black);
-  font-family:var(--mono);font-size:10px;font-weight:700;padding:3px 8px;
-  border:var(--border2);letter-spacing:1px;margin-left:12px;
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  padding:3px 8px;border:var(--border2);letter-spacing:1px;margin-left:12px;
 }
 
-/* ── HERO ───────────────────────────────────────────────────── */
+/* ── HERO ── */
 .hero{
-  border-bottom:var(--border);background:var(--white);
-  padding:64px 40px 56px;
-  display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:380px;
-}
-.hero-left{
-  border-right:var(--border);padding-right:48px;
-  display:flex;flex-direction:column;justify-content:center;gap:20px;
+  background:var(--white);border-bottom:var(--border);
+  padding:48px 20px 40px;text-align:center;
 }
 .hero-tag{
   display:inline-flex;align-items:center;gap:8px;
-  background:var(--yellow);border:var(--border2);padding:6px 14px;
-  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1.5px;
-  text-transform:uppercase;width:fit-content;box-shadow:var(--shadow-sm);
+  background:var(--yellow);border:var(--border2);padding:5px 14px;
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:20px;box-shadow:var(--shadow-sm);
 }
-.hero-tag::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--black);animation:blink 1.2s ease infinite}
+.hero-tag-dot{width:7px;height:7px;border-radius:50%;background:var(--black);animation:blink 1.4s ease infinite}
 .hero h1{
-  font-family:var(--mono);font-size:clamp(2rem,4vw,3rem);font-weight:700;
-  line-height:1.05;letter-spacing:-1.5px;text-transform:uppercase;
+  font-family:var(--mono);font-size:clamp(2rem,7vw,3.2rem);font-weight:700;
+  line-height:1.05;letter-spacing:-2px;text-transform:uppercase;margin-bottom:14px;
 }
-.hero h1 em{font-style:normal;background:var(--yellow);padding:0 4px}
-.hero-sub{font-size:15px;color:rgba(10,10,10,.65);max-width:420px;line-height:1.65}
-.hero-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
-.btn-primary{
-  display:inline-flex;align-items:center;gap:8px;padding:12px 22px;
-  background:var(--black);color:var(--white);border:var(--border);
-  font-family:var(--mono);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
-  box-shadow:var(--shadow);transition:all .12s;
-}
-.btn-primary:hover{background:var(--yellow);color:var(--black);box-shadow:var(--shadow-hover);transform:translate(-2px,-2px)}
-.btn-outline{
-  display:inline-flex;align-items:center;gap:8px;padding:12px 22px;
-  background:transparent;color:var(--black);border:var(--border);
-  font-family:var(--mono);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
-  box-shadow:var(--shadow);transition:all .12s;
-}
-.btn-outline:hover{background:var(--black);color:var(--white);box-shadow:var(--shadow-hover);transform:translate(-2px,-2px)}
+.hero h1 em{font-style:normal;background:var(--yellow);padding:0 6px}
+.hero-sub{font-size:15px;color:rgba(10,10,10,0.6);max-width:480px;margin:0 auto 8px;line-height:1.65}
 
-.hero-right{
-  padding-left:48px;display:flex;flex-direction:column;justify-content:center;gap:14px;
-}
-.hero-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.hero-stat{
-  background:var(--gray);border:var(--border);padding:16px 18px;
-  box-shadow:var(--shadow-sm);
-}
-.hero-stat-num{font-family:var(--mono);font-size:1.8rem;font-weight:700;line-height:1;margin-bottom:4px}
-.hero-stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;opacity:.55;font-family:var(--mono)}
+/* ── MAIN CARD ── */
+.main-section{padding:32px 20px;max-width:680px;margin:0 auto}
 
-/* ── DEMO ───────────────────────────────────────────────────── */
-.demo-section{
-  background:var(--white);border-bottom:var(--border);padding:48px 40px;
+.input-card{
+  background:var(--white);border:var(--border);box-shadow:var(--shadow-lg);
+  overflow:hidden;
+  animation:fadeUp .4s ease both;
 }
-.section-label{
-  display:inline-flex;align-items:center;gap:10px;
-  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:2px;
-  text-transform:uppercase;opacity:.5;margin-bottom:12px;
-}
-.section-label::before{content:'//';color:var(--yellow);opacity:1}
-.section-title{
-  font-family:var(--mono);font-size:1.4rem;font-weight:700;
-  letter-spacing:-.5px;margin-bottom:8px;
-}
-.section-sub{font-size:14px;opacity:.6;margin-bottom:28px;max-width:520px}
-
-.demo-box{
-  border:var(--border);box-shadow:var(--shadow-lg);max-width:680px;
-}
-.demo-top{
+.card-top{
   background:var(--black);color:var(--white);
-  padding:12px 18px;display:flex;align-items:center;gap:10px;
-  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1px;
-  text-transform:uppercase;border-bottom:var(--border);
-}
-.demo-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow)}
-.demo-body{padding:22px}
-.demo-input-row{display:flex;gap:0;border:var(--border);box-shadow:var(--shadow-sm);margin-bottom:14px}
-.demo-input{
-  flex:1;padding:12px 16px;
-  border:none;outline:none;font-family:var(--mono);font-size:13px;
-  background:var(--white);color:var(--black);
-}
-.demo-input::placeholder{color:var(--gray3)}
-.demo-input:focus{background:var(--gray)}
-.demo-btn{
-  padding:12px 20px;background:var(--black);color:var(--white);
-  border:none;border-left:var(--border);
-  font-family:var(--mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
-  cursor:pointer;transition:all .12s;display:flex;align-items:center;gap:8px;white-space:nowrap;
-}
-.demo-btn:hover{background:var(--yellow);color:var(--black);border-left-color:var(--black)}
-.demo-btn:disabled{opacity:.5;cursor:not-allowed}
-.demo-btn .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
-.demo-btn.loading .btn-text{display:none}
-.demo-btn.loading .spinner{display:block}
-
-/* Result */
-.demo-result{display:none}
-.demo-result.visible{display:block;animation:slideDown .25s ease}
-.result-profile{
-  display:flex;align-items:center;gap:14px;padding:14px 16px;
-  background:var(--gray);border:var(--border2);margin-bottom:12px;
-}
-.result-avatar{width:44px;height:44px;border:var(--border2);object-fit:cover;flex-shrink:0;background:var(--gray2)}
-.result-name{font-family:var(--mono);font-weight:700;font-size:14px}
-.result-caption{font-size:12px;opacity:.65;margin-top:2px;line-height:1.45}
-.result-type-badge{
-  display:inline-block;background:var(--yellow);border:var(--border2);
-  font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;
-  letter-spacing:1px;text-transform:uppercase;margin-left:8px;
-}
-.result-links{display:flex;flex-direction:column;gap:8px}
-.result-link{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:10px 14px;background:var(--white);border:var(--border2);
-  box-shadow:var(--shadow-sm);transition:all .12s;
-}
-.result-link:hover{box-shadow:var(--shadow);transform:translate(-1px,-1px)}
-.result-link-label{font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.result-link-url{font-size:11px;color:var(--blue);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:280px}
-.result-link-btn{
-  padding:6px 12px;background:var(--black);color:var(--white);border:var(--border2);
-  font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;
-  white-space:nowrap;transition:all .12s;flex-shrink:0;
-}
-.result-link-btn:hover{background:var(--yellow);color:var(--black)}
-.result-images{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:8px}
-.result-img{width:100%;aspect-ratio:1;object-fit:cover;border:var(--border2);cursor:pointer;transition:all .12s}
-.result-img:hover{box-shadow:var(--shadow)}
-
-.demo-error{
-  padding:14px 16px;background:#FF174410;border:2px solid var(--red);
-  font-family:var(--mono);font-size:13px;color:var(--red);display:none;
-}
-.demo-error.visible{display:block;animation:slideDown .2s ease}
-
-/* ── DOCS SECTION ───────────────────────────────────────────── */
-.docs-section{padding:56px 40px;border-bottom:var(--border)}
-.docs-grid{display:grid;grid-template-columns:280px 1fr;gap:32px;max-width:1100px}
-
-/* Docs sidebar */
-.docs-nav{position:sticky;top:74px;align-self:start}
-.docs-nav-item{
-  display:flex;align-items:center;gap:10px;padding:10px 14px;
-  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
-  border-left:3px solid transparent;color:rgba(10,10,10,.5);transition:all .12s;cursor:pointer;
-}
-.docs-nav-item:hover{color:var(--black);border-left-color:var(--gray3);background:var(--white)}
-.docs-nav-item.active{color:var(--black);border-left-color:var(--yellow);background:var(--white)}
-.docs-nav-item svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0}
-
-/* Docs content */
-.docs-content{display:flex;flex-direction:column;gap:28px}
-.doc-card{background:var(--white);border:var(--border);box-shadow:var(--shadow)}
-.doc-header{
-  background:var(--black);color:var(--white);padding:14px 20px;
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:11px 18px;display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
   border-bottom:var(--border);
 }
-.doc-header-left{display:flex;align-items:center;gap:10px}
-.doc-title{font-family:var(--mono);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.method-badge{
-  padding:3px 10px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;
-  border:2px solid currentColor;
-}
-.method-get{color:var(--green);border-color:var(--green);background:#00C85318}
-.doc-body{padding:22px 24px;display:flex;flex-direction:column;gap:18px}
-.doc-sub{font-size:13px;opacity:.65;line-height:1.6;font-family:var(--mono)}
+.card-dot{width:7px;height:7px;border-radius:50%;background:var(--yellow);animation:pulse 2s ease infinite}
+.card-body{padding:20px}
 
-/* Endpoint display */
-.endpoint-bar{
-  display:flex;align-items:stretch;border:var(--border);box-shadow:var(--shadow-sm);overflow:hidden;
+/* Input row */
+.input-row{display:flex;border:var(--border);box-shadow:var(--shadow-sm);overflow:hidden}
+.url-input{
+  flex:1;padding:13px 16px;border:none;outline:none;
+  font-family:var(--mono);font-size:13px;background:var(--white);color:var(--black);
+  min-width:0;
 }
-.endpoint-method{
-  padding:10px 16px;background:var(--green);color:var(--white);
-  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1px;
-  border-right:var(--border);display:flex;align-items:center;
+.url-input::placeholder{color:var(--gray3)}
+.url-input:focus{background:var(--gray)}
+.fetch-btn{
+  padding:13px 18px;background:var(--black);color:var(--white);
+  border-left:var(--border);
+  font-family:var(--mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  transition:all .12s;display:flex;align-items:center;gap:8px;white-space:nowrap;flex-shrink:0;
 }
-.endpoint-url{
-  flex:1;padding:10px 14px;background:#0e0e0e;color:#e4e4e4;
-  font-family:var(--mono);font-size:13px;display:flex;align-items:center;overflow-x:auto;
-}
-.copy-btn{
-  padding:10px 14px;background:transparent;border:none;border-left:var(--border);
-  color:rgba(255,255,255,.5);cursor:pointer;transition:all .12s;font-size:14px;
-}
-.copy-btn:hover{background:var(--yellow);color:var(--black)}
-.copy-btn.copied{background:var(--green);color:var(--white)}
+.fetch-btn:hover{background:var(--yellow);color:var(--black)}
+.fetch-btn:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
+.fetch-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round}
+.spin-icon{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.fetch-btn.loading .btn-label{display:none}
+.fetch-btn.loading .spin-icon{display:block}
 
-/* Params table */
-.params-table{border-collapse:collapse;width:100%;font-size:13px}
-.params-table th{
-  padding:9px 14px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:700;
-  letter-spacing:1.5px;text-transform:uppercase;background:var(--gray);border-bottom:var(--border2);
+.hint-row{
+  display:flex;align-items:center;gap:8px;
+  margin-top:12px;padding:10px 14px;
+  background:var(--gray);border:var(--border2);
+  font-family:var(--mono);font-size:11px;color:var(--gray3);
 }
-.params-table td{padding:10px 14px;border-bottom:2px solid var(--gray2);font-family:var(--mono);font-size:12px}
-.params-table tr:last-child td{border-bottom:none}
-.params-table .required{color:var(--red);font-weight:700}
-.params-table .optional{color:var(--gray3)}
-.params-table .type{color:var(--blue);font-weight:700}
+.hint-row svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
 
-/* Code block */
-.code-wrap{position:relative;border:var(--border);box-shadow:var(--shadow-sm)}
-.code-top{
-  background:var(--black);color:var(--white);padding:8px 14px;
-  display:flex;align-items:center;justify-content:space-between;
-  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-  border-bottom:var(--border2);
+/* Error */
+.error-box{
+  display:none;margin-top:14px;
+  padding:12px 16px;background:#FF174410;border:2px solid var(--red);
+  font-family:var(--mono);font-size:12px;color:var(--red);
+  display:none;align-items:center;gap:10px;
 }
-.code-copy{
-  background:transparent;border:2px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);
-  padding:4px 10px;font-family:var(--mono);font-size:10px;font-weight:700;
-  cursor:pointer;transition:all .12s;letter-spacing:.5px;
-}
-.code-copy:hover{background:var(--yellow);color:var(--black);border-color:var(--yellow)}
-.code-copy.copied{background:var(--green);color:var(--white);border-color:var(--green)}
-pre.code-block{
-  background:#0e0e0e;color:#e4e4e4;padding:16px 18px;
-  font-family:var(--mono);font-size:12.5px;line-height:1.65;
-  overflow-x:auto;margin:0;white-space:pre;
-}
-.c-key{color:#FFE500;font-weight:700}
-.c-str{color:#7BF5A0}
-.c-num{color:#79C0FF}
-.c-bool{color:#FF8C42;font-weight:700}
-.c-null{color:#FF6B6B;font-weight:700}
-.c-comment{color:#666}
+.error-box.show{display:flex;animation:slideDown .2s ease}
+.error-box svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
 
-/* Response schema */
-.schema-row{
-  display:flex;align-items:flex-start;gap:0;
-  border-bottom:2px solid var(--gray2);padding:10px 0;
-}
-.schema-row:last-child{border-bottom:none}
-.schema-key{font-family:var(--mono);font-weight:700;font-size:13px;min-width:120px;flex-shrink:0;color:var(--black)}
-.schema-type{font-family:var(--mono);font-size:11px;color:var(--blue);min-width:80px;flex-shrink:0;padding-top:2px}
-.schema-desc{font-size:12px;color:rgba(10,10,10,.6);line-height:1.5}
-.schema-nullable{font-size:10px;color:var(--orange);font-family:var(--mono);margin-top:2px}
+/* ── RESULT ── */
+.result-box{display:none;margin-top:20px;border:var(--border);box-shadow:var(--shadow-lg);overflow:hidden;animation:slideDown .3s ease both}
+.result-box.show{display:block}
 
-/* Error cards */
-.error-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.error-item{
-  padding:14px 16px;border:var(--border2);background:var(--gray);
-  box-shadow:var(--shadow-sm);
+/* Profile bar */
+.result-profile{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;background:var(--black);color:var(--white);
+  border-bottom:var(--border);
 }
-.error-code{font-family:var(--mono);font-weight:700;font-size:15px;margin-bottom:3px}
-.error-label{font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:.6}
-.error-desc{font-size:12px;opacity:.65;margin-top:4px}
-.e-400{border-left:4px solid var(--orange)}
-.e-502{border-left:4px solid var(--red)}
-.e-405{border-left:4px solid var(--blue)}
+.result-avatar{
+  width:42px;height:42px;border:2px solid rgba(255,255,255,0.2);
+  object-fit:cover;flex-shrink:0;background:var(--gray2);border-radius:0;
+}
+.result-avatar-placeholder{
+  width:42px;height:42px;border:2px solid rgba(255,255,255,0.2);
+  background:#1a1a1a;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.result-avatar-placeholder svg{width:20px;height:20px;stroke:rgba(255,255,255,0.3);fill:none;stroke-width:2}
+.result-meta{flex:1;min-width:0}
+.result-username{font-family:var(--mono);font-weight:700;font-size:14px;margin-bottom:3px}
+.result-caption{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.45;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.result-type{
+  flex-shrink:0;background:var(--yellow);color:var(--black);
+  font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 8px;
+  letter-spacing:1px;text-transform:uppercase;border:var(--border2);
+  align-self:flex-start;margin-top:2px;
+}
 
-/* ── FEATURES ───────────────────────────────────────────────── */
-.features-section{padding:56px 40px;background:var(--white);border-bottom:var(--border)}
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:var(--border)}
-.feature-card{
-  padding:28px 26px;border-right:var(--border);border-bottom:var(--border);
+/* Video preview */
+.video-preview-wrap{
+  background:var(--black);border-bottom:var(--border);
+  position:relative;display:flex;justify-content:center;align-items:center;
+  min-height:180px;
+}
+.video-preview{
+  width:100%;max-height:420px;display:block;
+  object-fit:contain;background:#000;
+}
+.video-preview-overlay{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.4);cursor:pointer;transition:background .15s;
+}
+.video-preview-overlay:hover{background:rgba(0,0,0,0.2)}
+.play-btn-circle{
+  width:56px;height:56px;background:var(--yellow);border:3px solid var(--black);
+  display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);
+}
+.play-btn-circle svg{width:22px;height:22px;fill:var(--black);stroke:none;margin-left:3px}
+
+/* Download actions */
+.dl-section{padding:18px;background:var(--white)}
+.dl-title{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray3);margin-bottom:12px}
+.dl-btns{display:flex;flex-direction:column;gap:10px}
+.dl-btn{
+  display:flex;align-items:center;gap:12px;padding:13px 16px;
+  border:var(--border);box-shadow:var(--shadow-sm);
+  background:var(--white);color:var(--black);
+  transition:all .12s;cursor:pointer;text-align:left;
+  text-decoration:none;
+}
+.dl-btn:hover{background:var(--black);color:var(--white);box-shadow:var(--shadow);transform:translate(-2px,-2px)}
+.dl-btn:hover .dl-btn-icon{background:var(--yellow);border-color:var(--black)}
+.dl-btn:hover .dl-btn-meta{color:rgba(255,255,255,0.5)}
+.dl-btn-icon{
+  width:40px;height:40px;background:var(--yellow);border:var(--border2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
   transition:all .12s;
 }
-.feature-card:nth-child(3n){border-right:none}
-.feature-card:nth-last-child(-n+3){border-bottom:none}
-.feature-card:hover{background:var(--gray);transform:translate(-2px,-2px);box-shadow:var(--shadow)}
-.feature-icon{
-  width:44px;height:44px;background:var(--yellow);border:var(--border);
-  display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+.dl-btn-icon svg{width:18px;height:18px;stroke:var(--black);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.dl-btn-info{flex:1;min-width:0}
+.dl-btn-label{font-family:var(--mono);font-weight:700;font-size:13px;margin-bottom:2px}
+.dl-btn-meta{font-size:11px;color:var(--gray3);font-family:var(--mono);transition:color .12s}
+.dl-btn-arrow{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;flex-shrink:0;opacity:0.4}
+
+/* Images grid */
+.images-section{padding:18px;background:var(--white);border-top:var(--border)}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:10px}
+.img-item{position:relative;aspect-ratio:1;overflow:hidden;border:var(--border2);cursor:pointer}
+.img-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s}
+.img-item:hover img{transform:scale(1.05)}
+.img-dl-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,0.5);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .15s;
+}
+.img-item:hover .img-dl-overlay{opacity:1}
+.img-dl-overlay svg{width:22px;height:22px;stroke:white;fill:none;stroke-width:2.2}
+
+/* ── FEATURES strip ── */
+.features-strip{
+  border-top:var(--border);border-bottom:var(--border);
+  background:var(--white);
+  display:grid;grid-template-columns:repeat(3,1fr);
+  max-width:680px;margin:24px auto 0;
+}
+.feat-item{
+  padding:20px 16px;text-align:center;border-right:var(--border);
+  animation:fadeUp .4s ease both;
+}
+.feat-item:last-child{border-right:none}
+.feat-icon{
+  width:38px;height:38px;background:var(--yellow);border:var(--border2);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 10px;
   box-shadow:var(--shadow-sm);
 }
-.feature-icon svg{width:20px;height:20px;stroke:var(--black);fill:none;stroke-width:2.2;stroke-linecap:round}
-.feature-title{font-family:var(--mono);font-weight:700;font-size:14px;margin-bottom:6px}
-.feature-desc{font-size:13px;opacity:.65;line-height:1.6}
+.feat-icon svg{width:16px;height:16px;stroke:var(--black);fill:none;stroke-width:2.2;stroke-linecap:round}
+.feat-label{font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.feat-desc{font-size:11px;color:var(--gray3);line-height:1.5}
 
-/* ── FOOTER ─────────────────────────────────────────────────── */
+/* ── FOOTER ── */
 footer{
   background:var(--black);color:var(--white);border-top:var(--border);
-  padding:28px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  padding:20px;display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;margin-top:32px;
 }
-.footer-logo{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--white)}
+.footer-logo{font-family:var(--mono);font-weight:700;font-size:14px}
 .footer-logo span{background:var(--yellow);color:var(--black);padding:0 5px}
-.footer-copy{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.4)}
-.footer-links{display:flex;gap:0}
+.footer-copy{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.35)}
 .footer-link{
-  padding:7px 14px;font-family:var(--mono);font-size:11px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.45);
+  font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:rgba(255,255,255,.4);padding:6px 12px;
   border-left:2px solid rgba(255,255,255,.1);transition:color .12s;
 }
 .footer-link:hover{color:var(--yellow)}
 
-/* ── TOAST ──────────────────────────────────────────────────── */
-#toast-wrap{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+/* ── TOAST ── */
+#toast-wrap{position:fixed;bottom:20px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none}
 .toast{
-  padding:12px 18px;background:var(--black);color:var(--white);
+  padding:11px 16px;background:var(--black);color:var(--white);
   border:var(--border);box-shadow:var(--shadow-lg);
-  font-family:var(--mono);font-size:13px;font-weight:700;
-  min-width:220px;animation:slideDown .2s ease;
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  min-width:200px;max-width:280px;display:flex;align-items:center;gap:9px;
+  animation:slideDown .2s ease;
 }
-.toast.ok{border-left:5px solid var(--green)}
-.toast.err{border-left:5px solid var(--red)}
+.toast svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;flex-shrink:0}
+.toast.ok{border-left:4px solid var(--green)}
+.toast.ok svg{stroke:var(--green)}
+.toast.err{border-left:4px solid var(--red)}
+.toast.err svg{stroke:var(--red)}
 
-/* ── RESPONSIVE ─────────────────────────────────────────────── */
-@media(max-width:900px){
-  .hero{grid-template-columns:1fr;padding:36px 24px}
-  .hero-left{border-right:none;border-bottom:var(--border);padding-right:0;padding-bottom:32px}
-  .hero-right{padding-left:0;padding-top:28px}
-  .docs-grid{grid-template-columns:1fr}
-  .docs-nav{position:static;display:flex;flex-wrap:wrap;gap:0;border:var(--border2);margin-bottom:0}
-  .docs-nav-item{border-left:none;border-bottom:2px solid var(--gray2);flex:1;min-width:120px;justify-content:center}
-  .docs-nav-item.active{border-bottom:3px solid var(--yellow)}
-  .features-grid{grid-template-columns:1fr 1fr}
-  .feature-card:nth-child(3n){border-right:var(--border)}
-  .feature-card:nth-child(2n){border-right:none}
-  .error-grid{grid-template-columns:1fr}
-}
+/* ── MOBILE ── */
 @media(max-width:600px){
-  .hero{padding:28px 16px}
-  .hero h1{font-size:1.7rem}
-  .demo-section,.docs-section,.features-section{padding:32px 16px}
-  footer{padding:20px 16px;flex-direction:column;align-items:flex-start}
-  .features-grid{grid-template-columns:1fr}
-  .feature-card{border-right:none!important}
   nav{padding:0 14px}
-  .nav-links .nav-link:not(.active){display:none}
+  .hero{padding:32px 16px 28px}
+  .hero h1{letter-spacing:-1.5px}
+  .main-section{padding:20px 14px}
+  .features-strip{grid-template-columns:1fr;max-width:100%;margin:20px 0 0}
+  .feat-item{border-right:none;border-bottom:var(--border);padding:14px}
+  .feat-item:last-child{border-bottom:none}
+  footer{padding:16px;flex-direction:column;gap:10px}
+  .nav-badge{display:none}
+  .url-input{font-size:12px;padding:11px 12px}
+  .fetch-btn{padding:11px 14px;font-size:11px}
 }
 </style>
 </head>
@@ -396,555 +297,312 @@ footer{
 <!-- NAV -->
 <nav>
   <div class="nav-logo">Tik<span>DL</span></div>
-  <div style="display:flex;align-items:center">
-    <div class="nav-links">
-      <a href="#demo"     class="nav-link active">Demo</a>
-      <a href="#docs"     class="nav-link">Docs</a>
-      <a href="#features" class="nav-link">Features</a>
-    </div>
+  <div class="nav-right">
+    <a href="/docs" class="nav-btn">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      API Docs
+    </a>
     <span class="nav-badge">v1.0</span>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-left">
-    <div class="anim-fade-up">
-      <div class="hero-tag">Free · No Watermark · Open API</div>
-    </div>
-    <h1 class="anim-fade-up-1">TikTok <em>Downloader</em><br/>REST API</h1>
-    <p class="hero-sub anim-fade-up-2">Download TikTok videos without watermark, slideshows, and audio. Simple GET request. No auth required.</p>
-    <div class="hero-btns anim-fade-up-3">
-      <a href="#demo" class="btn-primary">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        Try It Live
-      </a>
-      <a href="#docs" class="btn-outline">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Read Docs
-      </a>
-    </div>
+  <div class="hero-tag">
+    <div class="hero-tag-dot"></div>
+    Free · No Watermark · No Login
   </div>
-  <div class="hero-right anim-fade-up-2">
-    <div class="hero-stat-grid">
-      <div class="hero-stat">
-        <div class="hero-stat-num">GET</div>
-        <div class="hero-stat-label">Method</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num">0</div>
-        <div class="hero-stat-label">Auth Required</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num">JSON</div>
-        <div class="hero-stat-label">Response</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num">Free</div>
-        <div class="hero-stat-label">Forever</div>
-      </div>
-    </div>
-    <div style="background:var(--black);border:var(--border);padding:14px 16px;box-shadow:var(--shadow);font-family:var(--mono);font-size:12px;color:#e4e4e4;line-height:1.8">
-      <span style="color:#666">// Quick start</span><br/>
-      <span style="color:#FFE500">GET</span> /api/tiktok<span style="color:#7BF5A0">?url=</span><span style="color:#79C0FF">{tiktok_url}</span>
-    </div>
-  </div>
+  <h1>TikTok <em>Downloader</em></h1>
+  <p class="hero-sub">Download TikTok videos, slideshows, and audio — without watermark. Paste your link below.</p>
 </section>
 
-<!-- DEMO -->
-<section class="demo-section" id="demo">
-  <div class="section-label">Live Demo</div>
-  <div class="section-title">Try the API</div>
-  <div class="section-sub">Paste any TikTok URL and see the response in real time.</div>
+<!-- MAIN -->
+<div class="main-section">
 
-  <div class="demo-box anim-fade-up">
-    <div class="demo-top">
-      <div class="demo-dot"></div>
-      API Playground
+  <div class="input-card">
+    <div class="card-top">
+      <div class="card-dot"></div>
+      Paste Link
     </div>
-    <div class="demo-body">
-      <div class="demo-input-row">
-        <input class="demo-input" id="url-input" type="text" placeholder="https://www.tiktok.com/@user/video/123..."/>
-        <button class="demo-btn" id="demo-btn" onclick="runDemo()">
-          <span class="btn-text">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:6px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Fetch
+    <div class="card-body">
+      <div class="input-row">
+        <input class="url-input" id="url-input" type="url"
+          placeholder="https://www.tiktok.com/@user/video/123..."
+          autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <button class="fetch-btn" id="fetch-btn" onclick="runDownload()">
+          <span class="btn-label" style="display:flex;align-items:center;gap:7px;">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download
           </span>
-          <div class="spinner"></div>
+          <div class="spin-icon"></div>
         </button>
       </div>
 
-      <div class="demo-error" id="demo-error"></div>
-
-      <div class="demo-result" id="demo-result">
-        <div class="result-profile" id="result-profile" style="display:none">
-          <img class="result-avatar" id="result-avatar" src="" alt=""/>
-          <div>
-            <div class="result-name" id="result-name"></div>
-            <div class="result-caption" id="result-caption"></div>
-          </div>
-        </div>
-        <div class="result-links" id="result-links"></div>
-        <div class="result-images" id="result-images"></div>
-      </div>
-
-      <div style="margin-top:16px;padding:12px 14px;background:var(--gray);border:2px solid var(--gray2);font-family:var(--mono);font-size:11px;color:#888;display:flex;align-items:center;gap:8px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Works with TikTok videos, slideshows, and short links (vt.tiktok.com)
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- DOCS -->
-<section class="docs-section" id="docs">
-  <div class="section-label">Documentation</div>
-  <div class="section-title">API Reference</div>
-  <div class="section-sub">Everything you need to integrate TikDL into your app.</div>
-
-  <div class="docs-grid">
-
-    <!-- Sidebar nav -->
-    <div class="docs-nav anim-fade-up">
-      <div class="docs-nav-item active" onclick="scrollTo('doc-endpoint')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        Endpoint
-      </div>
-      <div class="docs-nav-item" onclick="scrollTo('doc-params')">
-        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-        Parameters
-      </div>
-      <div class="docs-nav-item" onclick="scrollTo('doc-response')">
-        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-        Response
-      </div>
-      <div class="docs-nav-item" onclick="scrollTo('doc-example')">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Examples
-      </div>
-      <div class="docs-nav-item" onclick="scrollTo('doc-errors')">
+      <div class="hint-row">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Errors
-      </div>
-    </div>
-
-    <!-- Docs cards -->
-    <div class="docs-content">
-
-      <!-- Endpoint -->
-      <div class="doc-card anim-fade-up" id="doc-endpoint">
-        <div class="doc-header">
-          <div class="doc-header-left">
-            <span class="method-badge method-get">GET</span>
-            <span class="doc-title">Endpoint</span>
-          </div>
-        </div>
-        <div class="doc-body">
-          <p class="doc-sub">Single endpoint. No versioning, no auth. Just a URL and you're done.</p>
-          <div class="endpoint-bar">
-            <span class="endpoint-method">GET</span>
-            <span class="endpoint-url" id="ep-url">/api/tiktok?url={tiktok_url}</span>
-            <button class="copy-btn" onclick="copyEndpoint(this)" title="Copy">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            </button>
-          </div>
-          <p class="doc-sub" style="margin-top:10px">Replace <code style="background:var(--gray);padding:2px 7px;font-family:var(--mono);font-size:12px;border:var(--border2)">{tiktok_url}</code> with any TikTok or vt.tiktok.com URL, URL-encoded.</p>
-        </div>
+        Supports TikTok videos, slideshows &amp; short links (vt.tiktok.com)
       </div>
 
-      <!-- Params -->
-      <div class="doc-card anim-fade-up-1" id="doc-params">
-        <div class="doc-header">
-          <div class="doc-header-left">
-            <span class="doc-title">Query Parameters</span>
-          </div>
-        </div>
-        <div class="doc-body" style="padding:0">
-          <table class="params-table">
-            <thead>
-              <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>url</strong></td>
-                <td><span class="type">string</span></td>
-                <td><span class="required">Yes</span></td>
-                <td>Full TikTok video/slideshow URL or short link (vt.tiktok.com)</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="error-box" id="error-box">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <span id="error-msg">Error</span>
       </div>
-
-      <!-- Response Schema -->
-      <div class="doc-card anim-fade-up-2" id="doc-response">
-        <div class="doc-header">
-          <div class="doc-header-left">
-            <span class="doc-title">Response Schema</span>
-          </div>
-          <span style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px">application/json</span>
-        </div>
-        <div class="doc-body">
-          <div class="schema-row">
-            <div class="schema-key">status</div>
-            <div class="schema-type">boolean</div>
-            <div class="schema-desc"><code>true</code> on success, <code>false</code> on error</div>
-          </div>
-          <div class="schema-row">
-            <div class="schema-key">type</div>
-            <div class="schema-type">string</div>
-            <div class="schema-desc"><code>"video"</code> or <code>"image"</code> (slideshow)</div>
-          </div>
-          <div class="schema-row">
-            <div class="schema-key">username</div>
-            <div class="schema-type">string</div>
-            <div class="schema-desc">TikTok display name of the creator</div>
-          </div>
-          <div class="schema-row">
-            <div class="schema-key">caption</div>
-            <div class="schema-type">string</div>
-            <div class="schema-desc">Video or slideshow caption text</div>
-          </div>
-          <div class="schema-row">
-            <div class="schema-key">avatar</div>
-            <div class="schema-type">string</div>
-            <div class="schema-desc">Creator's profile picture URL<div class="schema-nullable">may be empty</div></div>
-          </div>
-          <div class="schema-row">
-            <div class="schema-key">video</div>
-            <div class="schema-type">string</div>
-            <div class="schema-desc">Direct download link (no watermark)<div class="schema-nullable">empty for slideshow posts</div></div>
-          </div>
-          <div class="schema-row">
-            <div class="schema-key">music</div>
-            <div class="schema-type">string</div>
-            <div class="schema-desc">Direct audio download link (MP3)<div class="schema-nullable">may be empty</div></div>
-          </div>
-          <div class="schema-row">
-            <div class="schema-key">images</div>
-            <div class="schema-type">string[]</div>
-            <div class="schema-desc">Array of image URLs for slideshow posts<div class="schema-nullable">empty array for regular videos</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Examples -->
-      <div class="doc-card anim-fade-up-3" id="doc-example">
-        <div class="doc-header">
-          <div class="doc-header-left">
-            <span class="doc-title">Code Examples</span>
-          </div>
-        </div>
-        <div class="doc-body">
-
-          <div>
-            <div style="font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.6">JavaScript / fetch</div>
-            <div class="code-wrap">
-              <div class="code-top">
-                javascript
-                <button class="code-copy" onclick="copyCode(this,'js-example')">Copy</button>
-              </div>
-              <pre class="code-block" id="js-example"><span class="c-comment">// Download TikTok video</span>
-<span class="c-key">const</span> url = <span class="c-str">"https://www.tiktok.com/@user/video/123456789"</span>;
-<span class="c-key">const</span> res = <span class="c-key">await</span> fetch(<span class="c-str">`/api/tiktok?url=${encodeURIComponent(url)}`</span>);
-<span class="c-key">const</span> data = <span class="c-key">await</span> res.json();
-
-<span class="c-key">if</span> (data.status) {
-  console.log(<span class="c-str">"Creator:"</span>, data.username);
-  console.log(<span class="c-str">"Video:"</span>,   data.video);   <span class="c-comment">// no watermark</span>
-  console.log(<span class="c-str">"Music:"</span>,   data.music);   <span class="c-comment">// audio only</span>
-  console.log(<span class="c-str">"Images:"</span>,  data.images);  <span class="c-comment">// slideshow</span>
-}</pre>
-            </div>
-          </div>
-
-          <div>
-            <div style="font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.6">cURL</div>
-            <div class="code-wrap">
-              <div class="code-top">
-                bash
-                <button class="code-copy" onclick="copyCode(this,'curl-example')">Copy</button>
-              </div>
-              <pre class="code-block" id="curl-example">curl "<span class="c-str">https://your-domain.vercel.app/api/tiktok?url=https%3A%2F%2Fwww.tiktok.com%2F%40user%2Fvideo%2F123</span>"</pre>
-            </div>
-          </div>
-
-          <div>
-            <div style="font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.6">Success Response (video)</div>
-            <div class="code-wrap">
-              <div class="code-top">
-                json
-                <button class="code-copy" onclick="copyCode(this,'res-example')">Copy</button>
-              </div>
-              <pre class="code-block" id="res-example">{
-  <span class="c-key">"status"</span>:   <span class="c-bool">true</span>,
-  <span class="c-key">"type"</span>:     <span class="c-str">"video"</span>,
-  <span class="c-key">"username"</span>: <span class="c-str">"FlowFalcon"</span>,
-  <span class="c-key">"caption"</span>:  <span class="c-str">"My cool video #fyp"</span>,
-  <span class="c-key">"avatar"</span>:   <span class="c-str">"https://p16-sign.tiktokcdn.com/..."</span>,
-  <span class="c-key">"video"</span>:    <span class="c-str">"https://tikcdn.io/ssstik/..."</span>,
-  <span class="c-key">"music"</span>:    <span class="c-str">"https://tikcdn.io/ssstik/m/..."</span>,
-  <span class="c-key">"images"</span>:   []
-}</pre>
-            </div>
-          </div>
-
-          <div>
-            <div style="font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.6">Python</div>
-            <div class="code-wrap">
-              <div class="code-top">
-                python
-                <button class="code-copy" onclick="copyCode(this,'py-example')">Copy</button>
-              </div>
-              <pre class="code-block" id="py-example"><span class="c-key">import</span> requests, urllib.parse
-
-url = <span class="c-str">"https://www.tiktok.com/@user/video/123456789"</span>
-api = <span class="c-str">f"https://your-domain.vercel.app/api/tiktok?url={urllib.parse.quote(url)}"</span>
-data = requests.get(api).json()
-
-<span class="c-key">if</span> data[<span class="c-str">"status"</span>]:
-    print(<span class="c-str">f"Video: {data['video']}"</span>)</pre>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Errors -->
-      <div class="doc-card anim-fade-up-4" id="doc-errors">
-        <div class="doc-header">
-          <div class="doc-header-left">
-            <span class="doc-title">Error Responses</span>
-          </div>
-        </div>
-        <div class="doc-body">
-          <p class="doc-sub" style="margin-bottom:16px">All errors return <code style="background:var(--gray);padding:2px 7px;font-family:var(--mono);font-size:12px;border:var(--border2)">{status: false, error: "message"}</code></p>
-          <div class="error-grid">
-            <div class="error-item e-400">
-              <div class="error-code">400</div>
-              <div class="error-label">Bad Request</div>
-              <div class="error-desc">Missing <code>?url=</code> param, or URL is not a valid TikTok link</div>
-            </div>
-            <div class="error-item e-502">
-              <div class="error-code">502</div>
-              <div class="error-label">Bad Gateway</div>
-              <div class="error-desc">ssstik.io returned an error — link may be private, expired, or region-locked</div>
-            </div>
-            <div class="error-item e-405">
-              <div class="error-code">405</div>
-              <div class="error-label">Method Not Allowed</div>
-              <div class="error-desc">Only GET requests are accepted</div>
-            </div>
-            <div class="error-item" style="border-left:4px solid var(--gray3)">
-              <div class="error-code">502</div>
-              <div class="error-label">No Media Found</div>
-              <div class="error-desc">Video exists but no downloadable links were extracted</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
-</section>
+
+  <!-- RESULT -->
+  <div class="result-box" id="result-box">
+
+    <!-- Profile -->
+    <div class="result-profile" id="result-profile">
+      <div id="result-avatar-wrap"></div>
+      <div class="result-meta">
+        <div class="result-username" id="result-username"></div>
+        <div class="result-caption" id="result-caption"></div>
+      </div>
+      <div class="result-type" id="result-type"></div>
+    </div>
+
+    <!-- Video preview -->
+    <div class="video-preview-wrap" id="video-preview-wrap" style="display:none">
+      <video class="video-preview" id="video-player" preload="metadata" playsinline>
+        <source id="video-source" src="" type="video/mp4"/>
+      </video>
+      <div class="video-preview-overlay" id="play-overlay" onclick="toggleVideo()">
+        <div class="play-btn-circle" id="play-circle">
+          <svg id="play-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Download buttons -->
+    <div class="dl-section" id="dl-section">
+      <div class="dl-title">Download Options</div>
+      <div class="dl-btns" id="dl-btns"></div>
+    </div>
+
+    <!-- Images -->
+    <div class="images-section" id="images-section" style="display:none">
+      <div class="dl-title">Slideshow Images</div>
+      <div class="img-grid" id="img-grid"></div>
+    </div>
+
+  </div>
+</div>
 
 <!-- FEATURES -->
-<section class="features-section" id="features">
-  <div class="section-label">Why TikDL</div>
-  <div class="section-title">Features</div>
-  <div class="section-sub">Built for developers who need a simple, reliable TikTok downloader backend.</div>
-
-  <div class="features-grid anim-fade-up">
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </div>
-      <div class="feature-title">No Watermark</div>
-      <div class="feature-desc">Downloads the clean version without the TikTok watermark overlay.</div>
+<div class="features-strip">
+  <div class="feat-item">
+    <div class="feat-icon">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      </div>
-      <div class="feature-title">Video + Slideshow</div>
-      <div class="feature-desc">Handles both regular video posts and image slideshow posts automatically.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      </div>
-      <div class="feature-title">Audio Extract</div>
-      <div class="feature-desc">Extracts the background music/audio as a separate downloadable MP3 link.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-      </div>
-      <div class="feature-title">Simple REST API</div>
-      <div class="feature-desc">Single GET endpoint. No SDK, no auth, no setup. Works with any language or tool.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      </div>
-      <div class="feature-title">Vercel Edge Ready</div>
-      <div class="feature-desc">Runs on Vercel Serverless Functions. Deploy in one click, scales automatically.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      </div>
-      <div class="feature-title">Short Links</div>
-      <div class="feature-desc">Accepts vt.tiktok.com short links and all standard TikTok URL formats.</div>
-    </div>
+    <div class="feat-label">No Watermark</div>
+    <div class="feat-desc">Clean video without TikTok overlay</div>
   </div>
-</section>
+  <div class="feat-item" style="animation-delay:.08s">
+    <div class="feat-icon">
+      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="0"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+    </div>
+    <div class="feat-label">Video + Slides</div>
+    <div class="feat-desc">Works for videos and slideshows</div>
+  </div>
+  <div class="feat-item" style="animation-delay:.16s">
+    <div class="feat-icon">
+      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    </div>
+    <div class="feat-label">Audio Extract</div>
+    <div class="feat-desc">Download the background music</div>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">Tik<span>DL</span> API</div>
+  <div class="footer-logo">Tik<span>DL</span></div>
   <div class="footer-copy">© 2025 TikDL · Free & Open</div>
-  <nav class="footer-links">
-    <a href="#demo"   class="footer-link">Demo</a>
-    <a href="#docs"   class="footer-link">Docs</a>
+  <div style="display:flex">
+    <a href="/docs" class="footer-link">API Docs</a>
     <a href="/api/tiktok" class="footer-link">Endpoint</a>
-  </nav>
+  </div>
 </footer>
 
 <div id="toast-wrap"></div>
 
 <script>
-// ── DEMO ──────────────────────────────────────────────────────
-async function runDemo() {
-  const input = document.getElementById('url-input')
-  const url = input.value.trim()
-  const btn = document.getElementById('demo-btn')
-  const errEl = document.getElementById('demo-error')
-  const resEl = document.getElementById('demo-result')
+const $ = id => document.getElementById(id)
 
-  errEl.classList.remove('visible')
-  resEl.classList.remove('visible')
+// ── DOWNLOAD ────────────────────────────────────────────────
+async function runDownload() {
+  const url = $('url-input').value.trim()
+  const btn = $('fetch-btn')
+  hideError(); hideResult()
 
   if (!url) {
-    errEl.textContent = 'Please paste a TikTok URL first.'
-    errEl.classList.add('visible')
-    input.style.animation = 'shake .4s ease'
-    setTimeout(() => input.style.animation = '', 400)
+    showError('Paste a TikTok URL first.')
+    $('url-input').style.animation = 'shake .4s ease'
+    setTimeout(() => $('url-input').style.animation = '', 400)
     return
   }
 
-  btn.classList.add('loading')
-  btn.disabled = true
+  btn.classList.add('loading'); btn.disabled = true
 
   try {
-    const res = await fetch('/api/tiktok?url=' + encodeURIComponent(url))
+    const res  = await fetch('/api/tiktok?url=' + encodeURIComponent(url))
     const data = await res.json()
-
-    if (!data.status) throw new Error(data.error || 'Unknown error')
-
-    // Profile
-    const profile = document.getElementById('result-profile')
-    document.getElementById('result-avatar').src = data.avatar || ''
-    document.getElementById('result-avatar').style.display = data.avatar ? '' : 'none'
-    document.getElementById('result-name').innerHTML = (data.username || 'Unknown') + `<span class="result-type-badge">${data.type}</span>`
-    document.getElementById('result-caption').textContent = data.caption || ''
-    profile.style.display = (data.username || data.caption) ? 'flex' : 'none'
-
-    // Links
-    const linksEl = document.getElementById('result-links')
-    linksEl.innerHTML = ''
-    if (data.video) linksEl.appendChild(linkRow('Video (no watermark)', data.video))
-    if (data.music) linksEl.appendChild(linkRow('Audio / Music', data.music))
-
-    // Images
-    const imgsEl = document.getElementById('result-images')
-    imgsEl.innerHTML = ''
-    if (data.images && data.images.length) {
-      data.images.forEach(src => {
-        const img = document.createElement('img')
-        img.className = 'result-img'; img.src = src; img.alt = ''
-        img.onclick = () => window.open(src, '_blank')
-        imgsEl.appendChild(img)
-      })
-    }
-
-    resEl.classList.add('visible')
-    showToast('Done! ' + (data.type === 'image' ? data.images.length + ' images' : 'Video ready'), 'ok')
+    if (!data.status) throw new Error(data.error || 'Failed to fetch')
+    renderResult(data)
+    showToast('Ready to download!', 'ok')
   } catch (err) {
-    errEl.textContent = '❌ ' + err.message
-    errEl.classList.add('visible')
+    showError(err.message)
     showToast(err.message, 'err')
   } finally {
-    btn.classList.remove('loading')
-    btn.disabled = false
+    btn.classList.remove('loading'); btn.disabled = false
   }
 }
 
-function linkRow(label, url) {
-  const row = document.createElement('div')
-  row.className = 'result-link'
-  row.innerHTML = `
-    <div>
-      <div class="result-link-label">${label}</div>
-      <div class="result-link-url">${url}</div>
+// ── RENDER RESULT ────────────────────────────────────────────
+function renderResult(data) {
+  // Profile
+  const avatarWrap = $('result-avatar-wrap')
+  if (data.avatar) {
+    avatarWrap.innerHTML = `<img class="result-avatar" src="${esc(data.avatar)}" alt="" onerror="this.parentElement.innerHTML=avatarPlaceholder()"/>`
+  } else {
+    avatarWrap.innerHTML = avatarPlaceholder()
+  }
+  $('result-username').textContent = data.username || 'Unknown'
+  $('result-caption').textContent  = data.caption  || ''
+  $('result-type').textContent     = data.type === 'image' ? 'Slideshow' : 'Video'
+
+  // Video preview
+  const vWrap = $('video-preview-wrap')
+  if (data.video) {
+    $('video-source').src = data.video
+    const vp = $('video-player')
+    vp.load()
+    vWrap.style.display = ''
+    vp.onplay  = () => setPlayIcon(false)
+    vp.onpause = () => setPlayIcon(true)
+    vp.onended = () => setPlayIcon(true)
+  } else {
+    vWrap.style.display = 'none'
+  }
+
+  // Download buttons
+  const dlBtns = $('dl-btns')
+  dlBtns.innerHTML = ''
+  if (data.video) {
+    dlBtns.appendChild(makeDlBtn(
+      data.video,
+      'Video (No Watermark)',
+      'MP4 · High Quality',
+      videoIcon()
+    ))
+  }
+  if (data.music) {
+    dlBtns.appendChild(makeDlBtn(
+      data.music,
+      'Audio / Music',
+      'MP3 · Background track',
+      musicIcon()
+    ))
+  }
+
+  // Slideshow images
+  const imgSection = $('images-section')
+  const imgGrid    = $('img-grid')
+  imgGrid.innerHTML = ''
+  if (data.images && data.images.length) {
+    imgSection.style.display = ''
+    data.images.forEach((src, i) => {
+      const item = document.createElement('div')
+      item.className = 'img-item'
+      item.innerHTML = `
+        <img src="${esc(src)}" alt="Slide ${i+1}" loading="lazy"/>
+        <div class="img-dl-overlay" onclick="dlFile('${esc(src)}','slide-${i+1}.jpg')">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>`
+      imgGrid.appendChild(item)
+    })
+  } else {
+    imgSection.style.display = 'none'
+  }
+
+  $('result-box').classList.add('show')
+  $('result-box').scrollIntoView({ behavior:'smooth', block:'nearest' })
+}
+
+function makeDlBtn(url, label, meta, iconHtml) {
+  const a = document.createElement('a')
+  a.className = 'dl-btn'
+  a.href = url
+  a.target = '_blank'
+  a.rel = 'noopener'
+  a.setAttribute('download', '')
+  a.innerHTML = `
+    <div class="dl-btn-icon">${iconHtml}</div>
+    <div class="dl-btn-info">
+      <div class="dl-btn-label">${label}</div>
+      <div class="dl-btn-meta">${meta}</div>
     </div>
-    <button class="result-link-btn" onclick="window.open('${url.replace(/'/g,"\\'")}','_blank')">↗ Open</button>
+    <svg class="dl-btn-arrow" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
   `
-  return row
+  return a
 }
 
-document.getElementById('url-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') runDemo()
-})
-
-// ── COPY ──────────────────────────────────────────────────────
-function copyEndpoint(btn) {
-  const origin = window.location.origin
-  navigator.clipboard.writeText(origin + '/api/tiktok?url={tiktok_url}').then(() => {
-    btn.classList.add('copied')
-    showToast('Endpoint copied!', 'ok')
-    setTimeout(() => btn.classList.remove('copied'), 1600)
-  })
+function videoIcon() {
+  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="0"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`
+}
+function musicIcon() {
+  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`
+}
+function avatarPlaceholder() {
+  return `<div class="result-avatar-placeholder"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>`
 }
 
-function copyCode(btn, id) {
-  const el = document.getElementById(id)
-  const text = el.innerText || el.textContent
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.textContent; btn.textContent = 'Copied!'; btn.classList.add('copied')
-    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied') }, 1600)
-  })
+// ── VIDEO PLAYER ─────────────────────────────────────────────
+function toggleVideo() {
+  const vp = $('video-player')
+  if (!vp) return
+  vp.paused ? vp.play() : vp.pause()
+}
+function setPlayIcon(showPlay) {
+  const overlay = $('play-overlay')
+  if (overlay) overlay.style.opacity = showPlay ? '1' : '0'
 }
 
-// ── SCROLL ────────────────────────────────────────────────────
-function scrollTo(id) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  document.querySelectorAll('.docs-nav-item').forEach(el => el.classList.remove('active'))
-  event.currentTarget.classList.add('active')
+// ── DOWNLOAD FILE ────────────────────────────────────────────
+function dlFile(url, name) {
+  const a = document.createElement('a')
+  a.href = url; a.download = name; a.target = '_blank'
+  document.body.appendChild(a); a.click(); document.body.removeChild(a)
 }
 
-// ── TOAST ─────────────────────────────────────────────────────
+// ── UI HELPERS ───────────────────────────────────────────────
+function showError(msg) {
+  $('error-msg').textContent = msg
+  $('error-box').classList.add('show')
+}
+function hideError() { $('error-box').classList.remove('show') }
+function hideResult() { $('result-box').classList.remove('show') }
+function esc(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;') }
+
 function showToast(msg, type) {
-  const wrap = document.getElementById('toast-wrap')
+  const icons = {
+    ok:  `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
+    err: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`
+  }
+  const wrap = $('toast-wrap')
   const t = document.createElement('div')
   t.className = 'toast ' + (type || '')
-  t.textContent = msg
+  t.innerHTML = (icons[type] || '') + msg
   wrap.appendChild(t)
-  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300) }, 2800)
+  setTimeout(() => {
+    t.style.opacity = '0'; t.style.transition = 'opacity .3s'
+    setTimeout(() => t.remove(), 300)
+  }, 2800)
 }
 
-// Active nav on scroll
-const sections = ['demo','docs','features']
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'))
-      const link = document.querySelector(`.nav-link[href="#${e.target.id}"]`)
-      if (link) link.classList.add('active')
-    }
-  })
-}, { threshold: 0.3 })
-sections.forEach(id => { const el = document.getElementById(id); if(el) obs.observe(el) })
+// ── ENTER KEY ────────────────────────────────────────────────
+$('url-input').addEventListener('keydown', e => { if (e.key === 'Enter') runDownload() })
 </script>
 </body>
 </html>

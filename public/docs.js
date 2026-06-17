@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TikDL — API Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0a0a0a;--white:#fffdf7;--yellow:#FFE500;
+  --blue:#0066FF;--green:#00C853;--red:#FF1744;--orange:#FF5C00;
+  --gray:#f0ede6;--gray2:#e0ddd5;--gray3:#b0aca3;
+  --border:3px solid var(--black);--border2:2px solid var(--black);
+  --shadow:4px 4px 0 var(--black);--shadow-lg:6px 6px 0 var(--black);
+  --shadow-sm:2px 2px 0 var(--black);
+  --font:'Space Grotesk',sans-serif;--mono:'Space Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--font);background:var(--gray);color:var(--black);min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font);cursor:pointer;border:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:var(--black);border-bottom:var(--border);
+  height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+}
+.nav-logo{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--white);display:flex;align-items:center}
+.nav-logo span{background:var(--yellow);color:var(--black);padding:1px 6px;margin-left:2px}
+.nav-right{display:flex;align-items:center}
+.nav-btn{
+  display:flex;align-items:center;gap:7px;padding:8px 14px;
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  color:rgba(255,255,255,.55);border-left:2px solid rgba(255,255,255,.1);transition:color .15s;background:none;
+}
+.nav-btn:hover{color:var(--yellow)}
+.nav-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.nav-badge{background:var(--yellow);color:var(--black);font-family:var(--mono);font-size:10px;font-weight:700;padding:3px 8px;border:var(--border2);letter-spacing:1px;margin-left:12px}
+
+/* ── PAGE HEADER ── */
+.page-header{
+  background:var(--white);border-bottom:var(--border);padding:36px 24px;
+  animation:fadeUp .4s ease both;
+}
+.page-header-inner{max-width:1000px;margin:0 auto}
+.ph-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ph-label::before{content:'//';color:var(--yellow)}
+.page-header h1{font-family:var(--mono);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;letter-spacing:-1.5px;text-transform:uppercase;margin-bottom:8px}
+.page-header p{font-size:14px;color:var(--gray3);max-width:480px}
+.ph-badge{
+  display:inline-flex;align-items:center;gap:8px;margin-top:16px;
+  background:var(--gray);border:var(--border2);padding:8px 14px;box-shadow:var(--shadow-sm);
+  font-family:var(--mono);font-size:12px;
+}
+.method-get{color:var(--green);font-weight:700}
+
+/* ── LAYOUT ── */
+.docs-layout{max-width:1000px;margin:0 auto;padding:28px 20px;display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start}
+
+/* Sidebar */
+.docs-sidebar{position:sticky;top:76px}
+.sidebar-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray3);padding:8px 14px 6px}
+.sidebar-link{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  font-family:var(--mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  color:rgba(10,10,10,.45);border-left:3px solid transparent;transition:all .12s;cursor:pointer;background:none;
+  width:100%;text-align:left;
+}
+.sidebar-link:hover{color:var(--black);background:var(--white);border-left-color:var(--gray3)}
+.sidebar-link.active{color:var(--black);background:var(--white);border-left-color:var(--yellow);box-shadow:var(--shadow-sm)}
+.sidebar-link svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+
+/* Doc cards */
+.doc-card{background:var(--white);border:var(--border);box-shadow:var(--shadow);margin-bottom:20px;animation:fadeUp .4s ease both}
+.doc-card-head{
+  background:var(--black);color:var(--white);padding:13px 20px;
+  display:flex;align-items:center;justify-content:space-between;border-bottom:var(--border);
+}
+.doc-card-title{font-family:var(--mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:10px}
+.badge-get{padding:3px 9px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1px;border:2px solid var(--green);color:var(--green);background:#00C85318}
+.doc-card-meta{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px}
+.doc-body{padding:22px 24px}
+.doc-sub{font-size:13px;color:var(--gray3);line-height:1.7;font-family:var(--mono);margin-bottom:16px}
+
+/* Endpoint bar */
+.ep-bar{display:flex;align-items:stretch;border:var(--border);box-shadow:var(--shadow-sm);overflow:hidden}
+.ep-method{padding:10px 14px;background:var(--green);color:var(--white);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;border-right:var(--border);display:flex;align-items:center}
+.ep-url{flex:1;padding:10px 14px;background:#0e0e0e;color:#e4e4e4;font-family:var(--mono);font-size:13px;display:flex;align-items:center;overflow-x:auto}
+.copy-btn{padding:10px 13px;background:transparent;border:none;border-left:var(--border);color:rgba(255,255,255,.4);cursor:pointer;transition:all .12s;display:flex;align-items:center}
+.copy-btn:hover{background:var(--yellow);color:var(--black)}
+.copy-btn.copied{background:var(--green);color:var(--white)}
+.copy-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* Params table */
+.params-table{border-collapse:collapse;width:100%;font-size:13px}
+.params-table th{padding:9px 14px;text-align:left;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:var(--gray);border-bottom:var(--border2)}
+.params-table td{padding:10px 14px;border-bottom:2px solid var(--gray2);font-family:var(--mono);font-size:12px}
+.params-table tr:last-child td{border-bottom:none}
+.t-req{color:var(--red);font-weight:700}
+.t-type{color:var(--blue);font-weight:700}
+
+/* Schema */
+.schema-row{display:flex;align-items:flex-start;gap:0;padding:11px 0;border-bottom:2px solid var(--gray2)}
+.schema-row:last-child{border-bottom:none}
+.s-key{font-family:var(--mono);font-weight:700;font-size:13px;min-width:110px;flex-shrink:0}
+.s-type{font-family:var(--mono);font-size:11px;color:var(--blue);min-width:80px;flex-shrink:0;padding-top:2px}
+.s-desc{font-size:12px;color:rgba(10,10,10,.6);line-height:1.55}
+.s-note{font-size:10px;color:var(--orange);font-family:var(--mono);margin-top:2px}
+
+/* Code */
+.code-wrap{border:var(--border);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:18px}
+.code-top{background:var(--black);color:var(--white);padding:8px 14px;display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:var(--border2)}
+.code-copy{background:transparent;border:2px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5);padding:4px 10px;font-family:var(--mono);font-size:9px;font-weight:700;cursor:pointer;transition:all .12s;letter-spacing:.5px}
+.code-copy:hover{background:var(--yellow);color:var(--black);border-color:var(--yellow)}
+.code-copy.copied{background:var(--green);color:var(--white);border-color:var(--green)}
+pre.code-block{background:#0e0e0e;color:#e4e4e4;padding:16px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.65;overflow-x:auto;margin:0;white-space:pre}
+.c-k{color:#FFE500;font-weight:700}.c-s{color:#7BF5A0}.c-n{color:#79C0FF}.c-b{color:#FF8C42;font-weight:700}.c-c{color:#555}.c-null{color:#FF6B6B;font-weight:700}
+
+/* Errors */
+.err-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err-item{padding:14px 16px;border:var(--border2);background:var(--gray);box-shadow:var(--shadow-sm)}
+.err-code{font-family:var(--mono);font-weight:700;font-size:15px;margin-bottom:2px}
+.err-label{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:.55}
+.err-desc{font-size:12px;opacity:.6;margin-top:4px;line-height:1.5}
+.bl-orange{border-left:4px solid var(--orange)}
+.bl-red{border-left:4px solid var(--red)}
+.bl-blue{border-left:4px solid var(--blue)}
+.bl-gray{border-left:4px solid var(--gray3)}
+
+/* inline code */
+code{background:var(--gray);padding:2px 7px;font-family:var(--mono);font-size:12px;border:var(--border2)}
+
+/* CTA */
+.try-cta{
+  background:var(--yellow);border:var(--border);padding:20px 24px;box-shadow:var(--shadow);margin-bottom:20px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  animation:fadeUp .4s ease both;
+}
+.cta-title{font-family:var(--mono);font-weight:700;font-size:14px;margin-bottom:3px}
+.cta-sub{font-size:12px;opacity:.65}
+.cta-btn{
+  display:flex;align-items:center;gap:8px;padding:11px 18px;
+  background:var(--black);color:var(--white);border:var(--border);
+  font-family:var(--mono);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  box-shadow:var(--shadow-sm);transition:all .12s;white-space:nowrap;
+}
+.cta-btn:hover{background:var(--white);color:var(--black);box-shadow:var(--shadow);transform:translate(-2px,-2px)}
+.cta-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round}
+
+/* TOAST */
+#toast-wrap{position:fixed;bottom:20px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none}
+.toast{padding:11px 16px;background:var(--black);color:var(--white);border:var(--border);box-shadow:var(--shadow-lg);font-family:var(--mono);font-size:12px;font-weight:700;min-width:200px;display:flex;align-items:center;gap:9px;animation:slideDown .2s ease}
+.toast.ok{border-left:4px solid var(--green)}
+
+/* RESPONSIVE */
+@media(max-width:720px){
+  .docs-layout{grid-template-columns:1fr;padding:16px}
+  .docs-sidebar{position:static;display:flex;flex-wrap:wrap;gap:0;border:var(--border2);background:var(--white);margin-bottom:16px}
+  .sidebar-label{display:none}
+  .sidebar-link{border-left:none;border-bottom:2px solid var(--gray2);flex:1;min-width:80px;justify-content:center;font-size:9px;padding:10px 8px;gap:5px}
+  .sidebar-link.active{border-bottom:3px solid var(--yellow);background:none}
+  .err-grid{grid-template-columns:1fr}
+  .schema-row{flex-direction:column;gap:4px}
+  .s-key,.s-type{min-width:auto}
+  nav{padding:0 14px}
+  .nav-badge{display:none}
+  .doc-body{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Tik<span>DL</span></a>
+  <div class="nav-right">
+    <a href="/" class="nav-btn">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download
+    </a>
+    <span class="nav-badge">v1.0</span>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="ph-label">Documentation</div>
+    <h1>API Reference</h1>
+    <p>Everything you need to integrate TikDL into your app. No auth, no SDK, single GET request.</p>
+    <div class="ph-badge">
+      <span class="method-get">GET</span>
+      <span style="font-family:var(--mono);font-size:12px">/api/tiktok?url={tiktok_url}</span>
+    </div>
+  </div>
+</div>
+
+<div class="docs-layout">
+  <!-- SIDEBAR -->
+  <aside class="docs-sidebar">
+    <div class="sidebar-label">Contents</div>
+    <button class="sidebar-link active" onclick="goTo('sec-endpoint',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/></svg>
+      Endpoint
+    </button>
+    <button class="sidebar-link" onclick="goTo('sec-params',this)">
+      <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Parameters
+    </button>
+    <button class="sidebar-link" onclick="goTo('sec-response',this)">
+      <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Response
+    </button>
+    <button class="sidebar-link" onclick="goTo('sec-examples',this)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Examples
+    </button>
+    <button class="sidebar-link" onclick="goTo('sec-errors',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Errors
+    </button>
+  </aside>
+
+  <!-- CONTENT -->
+  <div>
+
+    <!-- CTA -->
+    <div class="try-cta">
+      <div>
+        <div class="cta-title">Try it live</div>
+        <div class="cta-sub">Go to the downloader and test with a real TikTok link</div>
+      </div>
+      <a href="/" class="cta-btn">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Open Downloader
+      </a>
+    </div>
+
+    <!-- ENDPOINT -->
+    <div class="doc-card" id="sec-endpoint">
+      <div class="doc-card-head">
+        <div class="doc-card-title">
+          <span class="badge-get">GET</span>
+          Endpoint
+        </div>
+      </div>
+      <div class="doc-body">
+        <p class="doc-sub">Single endpoint. No versioning, no auth. One URL and you're done.</p>
+        <div class="ep-bar">
+          <span class="ep-method">GET</span>
+          <span class="ep-url" id="ep-url">/api/tiktok?url={tiktok_url}</span>
+          <button class="copy-btn" onclick="copyEndpoint(this)" title="Copy endpoint">
+            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="0"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+        <p style="margin-top:12px;font-size:13px;color:var(--gray3);font-family:var(--mono)">
+          Replace <code>{tiktok_url}</code> with any TikTok or vt.tiktok.com URL, URL-encoded.
+        </p>
+      </div>
+    </div>
+
+    <!-- PARAMS -->
+    <div class="doc-card" id="sec-params" style="animation-delay:.06s">
+      <div class="doc-card-head">
+        <div class="doc-card-title">Query Parameters</div>
+      </div>
+      <div class="doc-body" style="padding:0">
+        <table class="params-table">
+          <thead>
+            <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>url</strong></td>
+              <td><span class="t-type">string</span></td>
+              <td><span class="t-req">Yes</span></td>
+              <td>Full TikTok video/slideshow URL or short link (vt.tiktok.com)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RESPONSE -->
+    <div class="doc-card" id="sec-response" style="animation-delay:.12s">
+      <div class="doc-card-head">
+        <div class="doc-card-title">Response Schema</div>
+        <span class="doc-card-meta">application/json</span>
+      </div>
+      <div class="doc-body">
+        <div class="schema-row"><div class="s-key">status</div><div class="s-type">boolean</div><div class="s-desc"><code>true</code> on success, <code>false</code> on error</div></div>
+        <div class="schema-row"><div class="s-key">type</div><div class="s-type">string</div><div class="s-desc"><code>"video"</code> or <code>"image"</code> (slideshow)</div></div>
+        <div class="schema-row"><div class="s-key">username</div><div class="s-type">string</div><div class="s-desc">TikTok display name of the creator</div></div>
+        <div class="schema-row"><div class="s-key">caption</div><div class="s-type">string</div><div class="s-desc">Video or slideshow caption text</div></div>
+        <div class="schema-row"><div class="s-key">avatar</div><div class="s-type">string</div><div class="s-desc">Creator profile picture URL<div class="s-note">may be empty</div></div></div>
+        <div class="schema-row"><div class="s-key">video</div><div class="s-type">string</div><div class="s-desc">Direct download link, no watermark<div class="s-note">empty for slideshow posts</div></div></div>
+        <div class="schema-row"><div class="s-key">music</div><div class="s-type">string</div><div class="s-desc">Direct audio download link (MP3)<div class="s-note">may be empty</div></div></div>
+        <div class="schema-row"><div class="s-key">images</div><div class="s-type">string[]</div><div class="s-desc">Array of image URLs for slideshows<div class="s-note">empty array for regular videos</div></div></div>
+      </div>
+    </div>
+
+    <!-- EXAMPLES -->
+    <div class="doc-card" id="sec-examples" style="animation-delay:.18s">
+      <div class="doc-card-head">
+        <div class="doc-card-title">Code Examples</div>
+      </div>
+      <div class="doc-body" style="display:flex;flex-direction:column;gap:20px">
+
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;color:var(--gray3)">JavaScript / fetch</div>
+          <div class="code-wrap">
+            <div class="code-top">javascript<button class="code-copy" onclick="copyCode(this,'ex-js')">Copy</button></div>
+            <pre class="code-block" id="ex-js"><span class="c-c">// Download TikTok video</span>
+<span class="c-k">const</span> url = <span class="c-s">"https://www.tiktok.com/@user/video/123456789"</span>;
+<span class="c-k">const</span> res  = <span class="c-k">await</span> fetch(<span class="c-s">`/api/tiktok?url=${encodeURIComponent(url)}`</span>);
+<span class="c-k">const</span> data = <span class="c-k">await</span> res.json();
+
+<span class="c-k">if</span> (data.status) {
+  console.log(<span class="c-s">"Creator:"</span>, data.username);
+  console.log(<span class="c-s">"Video:"</span>,   data.video);   <span class="c-c">// no watermark</span>
+  console.log(<span class="c-s">"Music:"</span>,   data.music);   <span class="c-c">// audio only</span>
+  console.log(<span class="c-s">"Images:"</span>,  data.images);  <span class="c-c">// slideshow</span>
+}</pre>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;color:var(--gray3)">cURL</div>
+          <div class="code-wrap">
+            <div class="code-top">bash<button class="code-copy" onclick="copyCode(this,'ex-curl')">Copy</button></div>
+            <pre class="code-block" id="ex-curl">curl <span class="c-s">"https://your-domain.vercel.app/api/tiktok?url=https%3A%2F%2Fwww.tiktok.com%2F%40user%2Fvideo%2F123"</span></pre>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;color:var(--gray3)">Success Response (video)</div>
+          <div class="code-wrap">
+            <div class="code-top">json<button class="code-copy" onclick="copyCode(this,'ex-res')">Copy</button></div>
+            <pre class="code-block" id="ex-res">{
+  <span class="c-k">"status"</span>:   <span class="c-b">true</span>,
+  <span class="c-k">"type"</span>:     <span class="c-s">"video"</span>,
+  <span class="c-k">"username"</span>: <span class="c-s">"creator123"</span>,
+  <span class="c-k">"caption"</span>:  <span class="c-s">"My cool video #fyp"</span>,
+  <span class="c-k">"avatar"</span>:   <span class="c-s">"https://p16-sign.tiktokcdn.com/..."</span>,
+  <span class="c-k">"video"</span>:    <span class="c-s">"https://tikcdn.io/ssstik/..."</span>,
+  <span class="c-k">"music"</span>:    <span class="c-s">"https://tikcdn.io/ssstik/m/..."</span>,
+  <span class="c-k">"images"</span>:   []
+}</pre>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;color:var(--gray3)">Python</div>
+          <div class="code-wrap">
+            <div class="code-top">python<button class="code-copy" onclick="copyCode(this,'ex-py')">Copy</button></div>
+            <pre class="code-block" id="ex-py"><span class="c-k">import</span> requests, urllib.parse
+
+url = <span class="c-s">"https://www.tiktok.com/@user/video/123456789"</span>
+api = <span class="c-s">f"https://your-domain.vercel.app/api/tiktok?url={urllib.parse.quote(url)}"</span>
+data = requests.get(api).json()
+
+<span class="c-k">if</span> data[<span class="c-s">"status"</span>]:
+    print(<span class="c-s">f"Video: {data['video']}"</span>)</pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ERRORS -->
+    <div class="doc-card" id="sec-errors" style="animation-delay:.24s">
+      <div class="doc-card-head">
+        <div class="doc-card-title">Error Responses</div>
+      </div>
+      <div class="doc-body">
+        <p class="doc-sub">All errors return <code>{"status": false, "error": "message"}</code></p>
+        <div class="err-grid">
+          <div class="err-item bl-orange">
+            <div class="err-code">400</div>
+            <div class="err-label">Bad Request</div>
+            <div class="err-desc">Missing <code>?url=</code> param, or URL is not a valid TikTok link</div>
+          </div>
+          <div class="err-item bl-red">
+            <div class="err-code">502</div>
+            <div class="err-label">Bad Gateway</div>
+            <div class="err-desc">Source returned an error — link may be private, expired, or region-locked</div>
+          </div>
+          <div class="err-item bl-blue">
+            <div class="err-code">405</div>
+            <div class="err-label">Method Not Allowed</div>
+            <div class="err-desc">Only GET requests are accepted</div>
+          </div>
+          <div class="err-item bl-gray">
+            <div class="err-code">502</div>
+            <div class="err-label">No Media Found</div>
+            <div class="err-desc">Video exists but no downloadable links were extracted</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer style="background:var(--black);color:var(--white);border-top:var(--border);padding:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+  <a href="/" style="font-family:var(--mono);font-weight:700;font-size:14px;color:var(--white)">Tik<span style="background:var(--yellow);color:var(--black);padding:0 5px">DL</span></a>
+  <span style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3)">© 2025 TikDL · Free & Open</span>
+  <div style="display:flex">
+    <a href="/" style="font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.4);padding:6px 12px;border-left:2px solid rgba(255,255,255,.1)">Downloader</a>
+    <a href="/api/tiktok" style="font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.4);padding:6px 12px;border-left:2px solid rgba(255,255,255,.1)">Endpoint</a>
+  </div>
+</footer>
+
+<div id="toast-wrap"></div>
+
+<script>
+function goTo(id, btn) {
+  document.getElementById(id)?.scrollIntoView({ behavior:'smooth', block:'start' })
+  document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'))
+  btn.classList.add('active')
+}
+
+function copyEndpoint(btn) {
+  navigator.clipboard.writeText(window.location.origin + '/api/tiktok?url={tiktok_url}').then(() => {
+    btn.classList.add('copied')
+    showToast('Endpoint copied!')
+    setTimeout(() => btn.classList.remove('copied'), 1600)
+  })
+}
+
+function copyCode(btn, id) {
+  const text = document.getElementById(id).innerText
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent; btn.textContent = 'Copied!'; btn.classList.add('copied')
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied') }, 1600)
+  })
+}
+
+function showToast(msg) {
+  const wrap = document.getElementById('toast-wrap')
+  const t = document.createElement('div')
+  t.className = 'toast ok'
+  t.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00C853" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>${msg}`
+  wrap.appendChild(t)
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300) }, 2800)
+}
+
+// Highlight active section on scroll
+const sections = ['sec-endpoint','sec-params','sec-response','sec-examples','sec-errors']
+const links    = document.querySelectorAll('.sidebar-link')
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'))
+      const idx = sections.indexOf(e.target.id)
+      if (idx >= 0 && links[idx]) links[idx].classList.add('active')
+    }
+  })
+}, { threshold: 0.4 })
+sections.forEach(id => { const el = document.getElementById(id); if(el) obs.observe(el) })
+</script>
+</body>
+</html>

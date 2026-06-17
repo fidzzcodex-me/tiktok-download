@@ -3,7 +3,7 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/api/tiktok", "destination": "/api/tiktok.js" },
-    { "source": "/docs",       "destination": "/public/index.html" },
+    { "source": "/docs",       "destination": "/public/docs.html" },
     { "source": "/",           "destination": "/public/index.html" }
   ]
 }
